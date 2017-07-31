@@ -23,8 +23,9 @@
     crux
     exec-path-from-shell
     auto-highlight-symbol
-    smartparens))
-  ;;   py-autopep8))
+    smartparens
+    back-button
+    py-autopep8))
 
 (mapc #'(lambda (package)
           (unless (package-installed-p package)
@@ -32,11 +33,13 @@
             (package-install package)))
       myPackages)
 
-;; BASIC CUSTOMIZATION
+
+;; BASIC CONFIG
 ;; --------------------------------------
 (require 'better-defaults)
 (require 'smartparens)
 (require 'crux)
+(require 'company)
 
 ;; smartparens
 (add-hook 'prog-mode-hook 'turn-on-smartparens-mode)
@@ -53,26 +56,52 @@
 (column-number-mode t)
 (setq ring-bell-function 'ignore)
 
+;; Set default font
+(set-face-attribute 'default nil
+                    :family "Ubuntu Mono"
+                    :height 120
+                    :weight 'normal
+                    :slant 'normal
+                    :width 'normal)
+
+
+
 ;; PROGRAMMING CONFIGURATION
 ;; --------------------------------------
 ;; use space to indent by default
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 4)
 
+
+
+
 ;; PYTHON CONFIGURATION
+;; uses company for completion
 ;; --------------------------------------
 (elpy-enable)
-(elpy-use-ipython)
+;;(elpy-use-ipython)
 
 ;; use flycheck not flymake with elpy
 (when (require 'flycheck nil t)
   (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
   (add-hook 'elpy-mode-hook 'flycheck-mode))
 
+;; autopep8
+(require 'py-autopep8)
+(add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
+
+
 ;; C++ CONFIGURATION
 ;; --------------------------------------
-(add-hook 'c++-mode-hook 'flycheck-mode)
+(defun my-c++-mode-hook ()
+  (flycheck-mode)
+  (company-mode)
+  (ggtags-mode 1)
+  (setq flycheck-clang-language-standard "c++14"))
+
+(add-hook 'c++-mode-hook 'my-c++-mode-hook)
 (add-hook 'c-mode-hook 'flycheck-mode)
+
 (setq c-default-style "linux"
       c-basic-offset 4)
 
@@ -86,6 +115,7 @@
   (forward-line -1)
   (indent-according-to-mode))
 
+
 ;; Keyboard Shortcuts
 ;; --------------------------------------
 (global-set-key (kbd "C-x g") 'magit-status)
@@ -96,16 +126,24 @@
 (global-set-key (kbd "C-c I") 'crux-find-user-init-file)
 (global-set-key (kbd "C-c w") 'wdired-change-to-wdired-mode)
 
-(global-set-key (kbd "C-c W") 'whitespace-cleanup)
+(global-set-key (kbd "C-c W") 'whitespace-mode)
+;; TODO: define this only in python mode
+;; (define-key elpy-mode (kbd "C-=") 'elpy-goto-definition)
+(global-set-key (kbd "C-=") 'elpy-goto-definition)
+(global-set-key (kbd "C--") 'pop-tag-mark)
+
+(define-key company-active-map (kbd "C-p") 'company-select-previous)
+(define-key company-active-map (kbd "C-n") 'company-select-next)
+
 
 ;; TODO
 ;; --------------------------------------
-;; code completion with C-p and C-n
-;; tab for code completion
 ;; consider removing indentation highlighting in python
-;; goto definition new hotkeys
 ;; C-s stops at line
 ;; python auto-pep8?
 ;; breadcrumb
+;; auto-complete in ipython
+;; highlight symbol only highlights in current view
+;; c++14 or later
 
 ;; init.el ends here
