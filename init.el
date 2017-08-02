@@ -3,9 +3,7 @@
 ;; INSTALL PACKAGES
 ;; --------------------------------------
 (require 'package)
-
-(add-to-list 'package-archives
-             '("marmalade" . "https://marmalade-repo.org/packages/"))
+(setq package-enable-at-startup nil)
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/"))
 
@@ -14,8 +12,8 @@
   (package-refresh-contents))
 
 (defvar myPackages
-  '(better-defaults
-    cyberpunk-theme
+  '(use-package 
+   cyberpunk-theme
     ein
     elpy
     flycheck
@@ -33,10 +31,24 @@
             (package-install package)))
       myPackages)
 
+(use-package try
+  :ensure t)
+
+(use-package which-key
+  :ensure t
+  :config
+  (which-key-mode))
+
+(use-package org-bullets
+  :ensure t
+  :config
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+
+(use-package better-defaults
+  :ensure t)
 
 ;; BASIC CONFIG
 ;; --------------------------------------
-(require 'better-defaults)
 (require 'smartparens)
 (require 'crux)
 (require 'company)
@@ -96,7 +108,6 @@
 (defun my-c++-mode-hook ()
   (flycheck-mode)
   (company-mode)
-  (ggtags-mode 1)
   (setq flycheck-clang-language-standard "c++14"))
 
 (add-hook 'c++-mode-hook 'my-c++-mode-hook)
