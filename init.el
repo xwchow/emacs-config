@@ -21,15 +21,14 @@
   :init (global-set-key (kbd "C-x g") 'magit-status))
 
 (use-package flycheck :ensure t)
+(use-package company :ensure t)
 (use-package try :ensure t)
-(use-package crux :ensure t
-  :init (progn
-		  (global-set-key (kbd "C-c s") 'crux-transpose-windows)
-		  (global-set-key (kbd "C-c o") 'crux-open-with)
-		  (global-set-key (kbd "C-c n") 'crux-cleanup-buffer-or-region)
-		  (global-set-key (kbd "C-c I") 'crux-find-user-init-file)))
 
-(require 'company)
+(use-package crux :ensure t
+  :bind (("C-c s" . crux-transpose-windows)
+         ("C-c o" . crux-open-with)
+         ("C-c n" . crux-cleanup-buffer-or-region)
+         ("C-c I" . crux-find-user-init-file)))
 
 (use-package which-key :ensure t
   :config (which-key-mode))
