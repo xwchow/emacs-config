@@ -8,12 +8,14 @@
              '("melpa" . "https://melpa.org/packages/"))
 
 (package-initialize)
-(when (not package-archive-contents)
-  (package-refresh-contents))
+
+;; Bootstrap `use-package'
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
 
 (defvar myPackages
-  '(use-package 
-   cyberpunk-theme
+  '(cyberpunk-theme
     ein
     elpy
     flycheck
@@ -44,8 +46,26 @@
   :config
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
-(use-package better-defaults
+(use-package ace-window
+  :ensure t
+  :init
+  (global-set-key [remap other-window] 'ace-window))
+
+;; swiper
+(use-package counsel
   :ensure t)
+
+(use-package swiper
+  :ensure t
+  :config
+  (progn
+    (ivy-mode 1)
+    (setq ivy-use-virtual-buffers t)
+    (setq enable-recursive-minibuffers t)
+    (global-set-key "\C-s" 'swiper)
+    (global-set-key (kbd "M-x") 'counsel-M-x)
+    (global-set-key (kbd "C-x C-f") 'counsel-find-file)
+    ))
 
 ;; BASIC CONFIG
 ;; --------------------------------------
@@ -62,11 +82,21 @@
 (define-key auto-highlight-symbol-mode-map (kbd "M-n") 'ahs-forward)
 (setq ahs-idle-interval 1.0)
 
-(load-theme 'cyberpunk t) ;; load cyberpunk theme
-(setq inhibit-startup-message t) ;; hide the startup message
-(global-linum-mode t) ;; enable line numbers globally
+(setq inhibit-startup-message t) 
+
+(menu-bar-mode -1)
+(when (fboundp 'tool-bar-mode)
+  (tool-bar-mode -1))
+(when (fboundp 'scroll-bar-mode)
+  (scroll-bar-mode -1))
+(when (fboundp 'horizontal-scroll-bar-mode)
+  (horizontal-scroll-bar-mode -1))
+
 (column-number-mode t)
+(global-linum-mode t)
 (setq ring-bell-function 'ignore)
+
+(load-theme 'cyberpunk t) ;; load cyberpunk theme
 
 ;; Set default font
 (set-face-attribute 'default nil
@@ -76,15 +106,14 @@
                     :slant 'normal
                     :width 'normal)
 
-
+;; ibuffer
+(global-set-key (kbd "C-x C-b") 'ibuffer-other-window)
+(setq ibuffer-default-sorting-mode 'major-mode)
 
 ;; PROGRAMMING CONFIGURATION
 ;; --------------------------------------
 ;; use space to indent by default
-(setq-default indent-tabs-mode nil)
 (setq-default tab-width 4)
-
-
 
 
 ;; PYTHON CONFIGURATION
