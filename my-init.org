@@ -1,0 +1,166 @@
+#+STARTUP: overview
+
+* interface tweaks
+#+BEGIN_SRC emacs-lisp
+(setq inhibit-startup-message t)
+
+(menu-bar-mode -1)
+(when (fboundp 'tool-bar-mode)
+  (tool-bar-mode -1))
+(when (fboundp 'scroll-bar-mode)
+  (scroll-bar-mode -1))
+(when (fboundp 'horizontal-scroll-bar-mode)
+  (horizontal-scroll-bar-mode -1))
+
+(column-number-mode t)
+(global-linum-mode t)
+(show-paren-mode t)
+(setq ring-bell-function 'ignore)
+
+(global-set-key (kbd "<f5>") 'revert-buffer)
+#+END_SRC
+
+* try
+#+BEGIN_SRC emacs-lisp
+(use-package try :ensure t)
+#+END_SRC
+  
+* which-key
+Brings up some help
+#+BEGIN_SRC emacs-lisp
+(use-package which-key :ensure t
+  :config (which-key-mode))
+#+END_SRC
+   
+* flycheck
+#+BEGIN_SRC emacs-lisp
+(use-package flycheck :ensure t
+  :init (global-flycheck-mode t)
+  :config (progn
+            (setq-default flycheck-clang-language-standard "c++14")
+            (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))))
+#+END_SRC
+
+* python
+#+BEGIN_SRC emacs-lisp
+;; (use-package ein :ensure t)
+(use-package elpy :ensure t
+  :bind (:map elpy-mode-map
+              ("C-=" . elpy-goto-definition))
+  :init (progn (elpy-enable)
+               (setq elpy-rpc-python-command "python3")
+               (elpy-use-ipython "ipython3")))))
+
+;; flycheck instead of flymake
+(when (require 'flycheck nil t)
+  (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+  (add-hook 'elpy-mode-hook 'flycheck-mode))
+#+END_SRC
+  
+* other
+#+BEGIN_SRC emacs-lisp
+(use-package company :ensure t
+  :init (global-company-mode t))
+
+;; save location in file
+(use-package saveplace :ensure t
+  :config (setq-default save-place t))
+
+(use-package cyberpunk-theme :ensure t
+  :config (load-theme 'cyberpunk t))
+
+(use-package magit :ensure t
+  :bind ("C-x g" . magit-status))
+
+(use-package crux :ensure t
+  :bind (("C-c s" . crux-transpose-windows)
+         ("C-c o" . crux-open-with)
+         ("C-c n" . crux-cleanup-buffer-or-region)
+         ("C-c I" . crux-find-user-init-file)))
+
+
+(use-package org-bullets :ensure t
+  :config (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+
+(use-package ace-window :ensure t
+  :bind ("C-x o" . ace-window))
+
+;; swiper
+(use-package swiper  :ensure t
+  :init (use-package counsel :ensure t)
+  :bind (("C-s" . swiper)
+         ("C-r" . swiper)
+         ("C-c C-r" . ivy-resume)
+         ("M-x" . counsel-M-x)
+         ("C-x C-f" . counsel-find-file))
+  :config (progn (ivy-mode 1)
+                 (setq ivy-use-virtual-buffers t)
+                 (setq ivy-display-style 'fancy)
+                 (setq enable-recursive-minibuffers t)))
+
+(use-package smartparens :ensure t
+  :init (add-hook 'prog-mode-hook 'turn-on-smartparens-mode))
+
+;; auto-highlight-symbol
+(use-package auto-highlight-symbol :ensure t
+  :init (progn
+          (global-auto-highlight-symbol-mode)
+          (define-key auto-highlight-symbol-mode-map (kbd "M-p") 'ahs-backward)
+          (define-key auto-highlight-symbol-mode-map (kbd "M-n") 'ahs-forward)
+          (setq ahs-idle-interval 1.0)))
+
+;; Set default font
+(set-face-attribute 'default nil
+                    :family "Ubuntu Mono"
+                    :height 120
+                    :weight 'normal
+                    :slant 'normal
+                    :width 'normal)
+
+;; ibuffer
+(global-set-key (kbd "C-x C-b") 'ibuffer-other-window)
+(setq-default ibuffer-default-sorting-mode 'major-mode)
+
+;; PROGRAMMING CONFIGURATION
+;; --------------------------------------
+;; use space to indent by default
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 4)
+
+(global-set-key (kbd "C--") 'pop-tag-mark)
+
+;; C++ CONFIGURATION
+;; --------------------------------------
+(setq-default c-default-style "linux"
+              c-basic-offset 4)
+
+(sp-local-pair 'c++-mode "{" nil :post-handlers
+               '((my-create-newline-and-enter-sexp "RET")))
+
+(defun my-create-newline-and-enter-sexp (&rest _ignored)
+  "Open a new brace or bracket expression, with relevant newlines and indent. "
+  (newline)
+  (indent-according-to-mode)
+  (forward-line -1)
+  (indent-according-to-mode))
+
+;; Keyboard shortcuts
+;; --------------------------------------
+(global-set-key (kbd "C-c w") 'wdired-change-to-wdired-mode)
+(global-set-key (kbd "C-c W") 'whitespace-mode)
+
+(define-key company-active-map (kbd "C-p") 'company-select-previous)
+(define-key company-active-map (kbd "C-n") 'company-select-next)
+
+(autoload 'zap-up-to-char "misc"
+  "Kill up to, but not including ARGth occurrence of CHAR." t)
+
+(global-set-key (kbd "M-z") 'zap-up-to-char)
+
+;; TODO
+;; --------------------------------------
+;; highlight symbol only highlights in current view
+;; disable company for python
+#+END_SRC
+
+  
