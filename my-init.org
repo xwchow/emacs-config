@@ -1,6 +1,6 @@
 #+STARTUP: overview
 
-* interface tweaks
+* interface 
 #+BEGIN_SRC emacs-lisp
 (setq inhibit-startup-message t)
 
@@ -17,31 +17,50 @@
 (show-paren-mode t)
 (setq ring-bell-function 'ignore)
 
+(global-auto-revert-mode t)
+(setq auto-revert-verbose nil)
 (global-set-key (kbd "<f5>") 'revert-buffer)
 #+END_SRC
 
-* try
+* programming config
+** general
 #+BEGIN_SRC emacs-lisp
-(use-package try :ensure t)
-#+END_SRC
-  
-* which-key
-Brings up some help
-#+BEGIN_SRC emacs-lisp
-(use-package which-key :ensure t
-  :config (which-key-mode))
-#+END_SRC
-   
-* flycheck
-#+BEGIN_SRC emacs-lisp
+(use-package smartparens :ensure t
+  :init (add-hook 'prog-mode-hook 'turn-on-smartparens-mode))
+
+; (add-hook 'c-mode-common-hook
+;                     (lambda ()
+;                       (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
+;                         (ggtags-mode t))))
+
+(use-package ggtags :ensure t
+  :bind (:map ggtags-mode-map
+              ("C-=" . ggtags-find-tag-dwim))
+  :init (add-hook 'c-mode-common-hook
+                  (lambda ()
+                    (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
+                      (ggtags-mode t)))))
+
 (use-package flycheck :ensure t
   :init (global-flycheck-mode t)
   :config (progn
             (setq-default flycheck-clang-language-standard "c++14")
             (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))))
-#+END_SRC
 
-* python
+(use-package yasnippet :ensure t
+  :init (yas-global-mode 1))
+
+(global-set-key (kbd "M-o") 'ff-find-other-file)
+#+END_SRC
+   
+** org-mode
+#+BEGIN_SRC emacs-lisp
+(setq-default org-src-fontify-natively t)
+(setq-default org-src-preserve-indentation t)
+(setq-default org-src-tab-acts-natively t)
+#+END_SRC
+  
+** python-mode
 #+BEGIN_SRC emacs-lisp
 ;; (use-package ein :ensure t)
 (use-package elpy :ensure t
@@ -49,7 +68,7 @@ Brings up some help
               ("C-=" . elpy-goto-definition))
   :init (progn (elpy-enable)
                (setq elpy-rpc-python-command "python3")
-               (elpy-use-ipython "ipython3")))))
+               (elpy-use-ipython "ipython3")))
 
 ;; flycheck instead of flymake
 (when (require 'flycheck nil t)
@@ -57,6 +76,51 @@ Brings up some help
   (add-hook 'elpy-mode-hook 'flycheck-mode))
 #+END_SRC
   
+** c++-mode
+#+BEGIN_SRC emacs-lisp
+(setq-default c-default-style "linux"
+              c-basic-offset 4)
+
+(sp-local-pair 'c++-mode "{" nil :post-handlers
+               '((my-create-newline-and-enter-sexp "RET")))
+
+(defun my-create-newline-and-enter-sexp (&rest _ignored)
+  "Open a new brace or bracket expression, with relevant newlines and indent. "
+  (newline)
+  (indent-according-to-mode)
+  (forward-line -1)
+  (indent-according-to-mode))
+#+END_SRC
+
+* misc packages
+#+BEGIN_SRC emacs-lisp
+(global-hl-line-mode t)
+
+(use-package try :ensure t)
+
+; brings up key suggestions
+(use-package which-key :ensure t
+  :config (which-key-mode))
+
+; flashes the cursor's line when you scroll
+(use-package beacon :ensure t
+  :config (beacon-mode 1))
+
+; deletes all the whitespace when you hit backspace or delete
+(use-package hungry-delete :ensure t
+  :config (global-hungry-delete-mode t))
+
+; expand the marked region in semantic increments (negative prefix to reduce region)
+(use-package expand-region :ensure t
+  :config (global-set-key (kbd "M-=") 'er/expand-region))
+
+; mark and edit all copies of the marked region simultaniously. 
+(use-package iedit :ensure t)
+
+(use-package undo-tree :ensure t
+  :init (global-undo-tree-mode t))
+
+#+END_SRC
 * other
 #+BEGIN_SRC emacs-lisp
 (use-package company :ensure t
@@ -79,8 +143,6 @@ Brings up some help
          ("C-c I" . crux-find-user-init-file)))
 
 
-(use-package org-bullets :ensure t
-  :config (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
 (use-package ace-window :ensure t
   :bind ("C-x o" . ace-window))
@@ -92,14 +154,13 @@ Brings up some help
          ("C-r" . swiper)
          ("C-c C-r" . ivy-resume)
          ("M-x" . counsel-M-x)
+         ("C-c k" . counsel-ag)
          ("C-x C-f" . counsel-find-file))
   :config (progn (ivy-mode 1)
                  (setq ivy-use-virtual-buffers t)
                  (setq ivy-display-style 'fancy)
                  (setq enable-recursive-minibuffers t)))
 
-(use-package smartparens :ensure t
-  :init (add-hook 'prog-mode-hook 'turn-on-smartparens-mode))
 
 ;; auto-highlight-symbol
 (use-package auto-highlight-symbol :ensure t
@@ -128,22 +189,6 @@ Brings up some help
 (setq-default tab-width 4)
 
 (global-set-key (kbd "C--") 'pop-tag-mark)
-
-;; C++ CONFIGURATION
-;; --------------------------------------
-(setq-default c-default-style "linux"
-              c-basic-offset 4)
-
-(sp-local-pair 'c++-mode "{" nil :post-handlers
-               '((my-create-newline-and-enter-sexp "RET")))
-
-(defun my-create-newline-and-enter-sexp (&rest _ignored)
-  "Open a new brace or bracket expression, with relevant newlines and indent. "
-  (newline)
-  (indent-according-to-mode)
-  (forward-line -1)
-  (indent-according-to-mode))
-
 ;; Keyboard shortcuts
 ;; --------------------------------------
 (global-set-key (kbd "C-c w") 'wdired-change-to-wdired-mode)
@@ -156,11 +201,7 @@ Brings up some help
   "Kill up to, but not including ARGth occurrence of CHAR." t)
 
 (global-set-key (kbd "M-z") 'zap-up-to-char)
-
-;; TODO
-;; --------------------------------------
-;; highlight symbol only highlights in current view
-;; disable company for python
 #+END_SRC
-
   
+* TODO
+
