@@ -1,6 +1,6 @@
 #+STARTUP: overview
 
-* interface 
+* interface
 #+BEGIN_SRC emacs-lisp
 (setq inhibit-startup-message t)
 
@@ -17,6 +17,14 @@
 (show-paren-mode t)
 (setq ring-bell-function 'ignore)
 
+;; Set default font
+(set-face-attribute 'default nil
+                    :family "Ubuntu Mono"
+                    :height 120
+                    :weight 'normal
+                    :slant 'normal
+                    :width 'normal)
+
 (global-auto-revert-mode t)
 (setq auto-revert-verbose nil)
 (global-set-key (kbd "<f5>") 'revert-buffer)
@@ -25,14 +33,17 @@
 * programming config
 ** general
 #+BEGIN_SRC emacs-lisp
+(use-package company :ensure t
+  :init (global-company-mode t))
+
+;; use space to indent by default
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 4)
+
 (use-package smartparens :ensure t
   :init (add-hook 'prog-mode-hook 'turn-on-smartparens-mode))
 
-; (add-hook 'c-mode-common-hook
-;                     (lambda ()
-;                       (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
-;                         (ggtags-mode t))))
-
+;; requires global package
 (use-package ggtags :ensure t
   :bind (:map ggtags-mode-map
               ("C-=" . ggtags-find-tag-dwim))
@@ -50,16 +61,28 @@
 (use-package yasnippet :ensure t
   :init (yas-global-mode 1))
 
+;; Keyboard shortcuts
+(global-set-key (kbd "C--") 'pop-tag-mark)
+(global-set-key (kbd "C-c w") 'wdired-change-to-wdired-mode)
+(global-set-key (kbd "C-c W") 'whitespace-mode)
+
+(define-key company-active-map (kbd "C-p") 'company-select-previous)
+(define-key company-active-map (kbd "C-n") 'company-select-next)
+
+(autoload 'zap-up-to-char "misc"
+  "Kill up to, but not including ARGth occurrence of CHAR." t)
+(global-set-key (kbd "M-z") 'zap-up-to-char)
+
 (global-set-key (kbd "M-o") 'ff-find-other-file)
 #+END_SRC
-   
+
 ** org-mode
 #+BEGIN_SRC emacs-lisp
 (setq-default org-src-fontify-natively t)
 (setq-default org-src-preserve-indentation t)
 (setq-default org-src-tab-acts-natively t)
 #+END_SRC
-  
+
 ** python-mode
 #+BEGIN_SRC emacs-lisp
 ;; (use-package ein :ensure t)
@@ -75,7 +98,7 @@
   (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
   (add-hook 'elpy-mode-hook 'flycheck-mode))
 #+END_SRC
-  
+
 ** c++-mode
 #+BEGIN_SRC emacs-lisp
 (setq-default c-default-style "linux"
@@ -91,30 +114,30 @@
   (forward-line -1)
   (indent-according-to-mode))
 #+END_SRC
-
+   
 * misc packages
 #+BEGIN_SRC emacs-lisp
 (global-hl-line-mode t)
 
 (use-package try :ensure t)
 
-; brings up key suggestions
+;; brings up key suggestions
 (use-package which-key :ensure t
   :config (which-key-mode))
 
-; flashes the cursor's line when you scroll
+;; flashes the cursor's line when you scroll
 (use-package beacon :ensure t
   :config (beacon-mode 1))
 
-; deletes all the whitespace when you hit backspace or delete
+;; deletes all the whitespace when you hit backspace or delete
 (use-package hungry-delete :ensure t
   :config (global-hungry-delete-mode t))
 
-; expand the marked region in semantic increments (negative prefix to reduce region)
+;; expand the marked region in semantic increments (negative prefix to reduce region)
 (use-package expand-region :ensure t
   :config (global-set-key (kbd "M-=") 'er/expand-region))
 
-; mark and edit all copies of the marked region simultaniously. 
+;; mark and edit all copies of the marked region simultaniously.
 (use-package iedit :ensure t)
 
 (use-package undo-tree :ensure t
@@ -123,9 +146,6 @@
 #+END_SRC
 * other
 #+BEGIN_SRC emacs-lisp
-(use-package company :ensure t
-  :init (global-company-mode t))
-
 ;; save location in file
 (use-package saveplace :ensure t
   :config (setq-default save-place t))
@@ -142,8 +162,6 @@
          ("C-c n" . crux-cleanup-buffer-or-region)
          ("C-c I" . crux-find-user-init-file)))
 
-
-
 (use-package ace-window :ensure t
   :bind ("C-x o" . ace-window))
 
@@ -154,13 +172,12 @@
          ("C-r" . swiper)
          ("C-c C-r" . ivy-resume)
          ("M-x" . counsel-M-x)
-         ("C-c k" . counsel-ag)
+         ("C-c k" . counsel-ag) ;; requires silversearcher-ag package
          ("C-x C-f" . counsel-find-file))
   :config (progn (ivy-mode 1)
                  (setq ivy-use-virtual-buffers t)
                  (setq ivy-display-style 'fancy)
                  (setq enable-recursive-minibuffers t)))
-
 
 ;; auto-highlight-symbol
 (use-package auto-highlight-symbol :ensure t
@@ -170,38 +187,10 @@
           (define-key auto-highlight-symbol-mode-map (kbd "M-n") 'ahs-forward)
           (setq ahs-idle-interval 1.0)))
 
-;; Set default font
-(set-face-attribute 'default nil
-                    :family "Ubuntu Mono"
-                    :height 120
-                    :weight 'normal
-                    :slant 'normal
-                    :width 'normal)
-
 ;; ibuffer
 (global-set-key (kbd "C-x C-b") 'ibuffer-other-window)
 (setq-default ibuffer-default-sorting-mode 'major-mode)
-
-;; PROGRAMMING CONFIGURATION
-;; --------------------------------------
-;; use space to indent by default
-(setq-default indent-tabs-mode nil)
-(setq-default tab-width 4)
-
-(global-set-key (kbd "C--") 'pop-tag-mark)
-;; Keyboard shortcuts
-;; --------------------------------------
-(global-set-key (kbd "C-c w") 'wdired-change-to-wdired-mode)
-(global-set-key (kbd "C-c W") 'whitespace-mode)
-
-(define-key company-active-map (kbd "C-p") 'company-select-previous)
-(define-key company-active-map (kbd "C-n") 'company-select-next)
-
-(autoload 'zap-up-to-char "misc"
-  "Kill up to, but not including ARGth occurrence of CHAR." t)
-
-(global-set-key (kbd "M-z") 'zap-up-to-char)
 #+END_SRC
-  
-* TODO
 
+* TODO
+  + smartparens 
