@@ -83,7 +83,7 @@
 (setq-default org-src-tab-acts-natively t)
 #+END_SRC
 
-** python-mode
+** python
 #+BEGIN_SRC emacs-lisp
 ;; (use-package ein :ensure t)
 (use-package elpy :ensure t
@@ -99,7 +99,7 @@
   (add-hook 'elpy-mode-hook 'flycheck-mode))
 #+END_SRC
 
-** c++-mode
+** c++
 #+BEGIN_SRC emacs-lisp
 (setq-default c-default-style "linux"
               c-basic-offset 4)
@@ -115,6 +115,30 @@
   (indent-according-to-mode))
 #+END_SRC
    
+** php
+#+BEGIN_SRC emacs-lisp
+(use-package web-mode :ensure t
+  :init (add-to-list 'auto-mode-alist '("\\.php$" . web-mode)))
+#+END_SRC
+
+** ruby
+#+BEGIN_SRC emacs-lisp
+(use-package rvm :ensure t
+  :init (rvm-use-default))
+
+(use-package inf-ruby :ensure t
+  :init  (define-key inf-ruby-minor-mode-map (kbd "C-c C-c") 'ruby-send-block))
+#+END_SRC
+
+** html/css
+#+BEGIN_SRC emacs-lisp
+(use-package emmet-mode :ensure t
+  :init (progn
+          (add-hook 'sgml-mode-hook 'emmet-mode) ;; Auto-start on any markup modes
+          (add-hook 'css-mode-hook  'emmet-mode) ;; enable Emmet's css abbreviation.
+))
+#+END_SRC
+
 * misc packages
 #+BEGIN_SRC emacs-lisp
 (global-hl-line-mode t)
