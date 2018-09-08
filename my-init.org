@@ -33,6 +33,12 @@
 * programming config
 ** general
 #+BEGIN_SRC emacs-lisp
+;; (use-package highlight-parentheses :ensure t
+;;   :init (global-highlight-parentheses-mode t))
+
+(use-package expand-region :ensure t
+  :bind ("C-r" . er/expand-region))
+
 (use-package company :ensure t
   :init (global-company-mode t))
 
@@ -102,7 +108,7 @@
 ** c++
 #+BEGIN_SRC emacs-lisp
 (setq-default c-default-style "linux"
-              c-basic-offset 4)
+              c-basic-offset 2)
 
 (sp-local-pair 'c++-mode "{" nil :post-handlers
                '((my-create-newline-and-enter-sexp "RET")))
@@ -141,9 +147,26 @@
 ))
 #+END_SRC
    
-** clojure
+** lisp/schemes
 #+BEGIN_SRC emacs-lisp
 (use-package cider :ensure t)
+(use-package geiser :ensure t)
+(use-package rainbow-delimiters :ensure t
+  :init (progn 
+          (add-hook 'emacs-lisp-mode-hook       'rainbow-delimiters-mode)
+          (add-hook 'eval-expression-minibuffer-setup-hook 'rainbow-delimiters-mode)
+          (add-hook 'ielm-mode-hook             'rainbow-delimiters-mode)
+          (add-hook 'lisp-mode-hook             'rainbow-delimiters-mode)
+          (add-hook 'lisp-interaction-mode-hook 'rainbow-delimiters-mode)
+          (add-hook 'scheme-mode-hook           'rainbow-delimiters-mode)))
+;; (use-package paredit :ensure t
+;;   :init (progn 
+;;           (add-hook 'emacs-lisp-mode-hook       'enable-paredit-mode)
+;;           (add-hook 'eval-expression-minibuffer-setup-hook 'enable-paredit-mode)
+;;           (add-hook 'ielm-mode-hook             'enable-paredit-mode)
+;;           (add-hook 'lisp-mode-hook             'enable-paredit-mode)
+;;           (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
+;;           (add-hook 'scheme-mode-hook           'enable-paredit-mode)))
 #+END_SRC
 
 * misc packages
@@ -200,7 +223,7 @@
 (use-package swiper  :ensure t
   :init (use-package counsel :ensure t)
   :bind (("C-s" . swiper)
-         ("C-r" . swiper)
+;;         ("C-r" . swiper)
          ("C-c C-r" . ivy-resume)
          ("M-x" . counsel-M-x)
          ("C-c k" . counsel-ag) ;; requires silversearcher-ag package
