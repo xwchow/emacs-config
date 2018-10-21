@@ -30,7 +30,7 @@ emacsclient -e "(frames-on-display-list \"$DISPLAY\")" &>/dev/null
 
 # open frames detected, so open files in current frame
 if [ $? -eq 0 ]; then
-    emacsclient -n -t $*
+    emacsclient -n $*
 # no open frames detected, so open new frame
 else
     emacsclient -n -c -F "'(fullscreen . maximized)" $*
