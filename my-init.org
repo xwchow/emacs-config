@@ -2,6 +2,14 @@
 
 * interface
 #+BEGIN_SRC emacs-lisp
+;; Backups into a separate directory
+(add-to-list 'backup-directory-alist '("." . "~/.saves") :append)
+(customize-set-variable 'backup-by-copying t)
+(customize-set-variable 'delete-old-versions t)
+(customize-set-variable 'kept-new-versions 6)
+(customize-set-variable 'kept-old-versions 2)
+(customize-set-variable 'version-control t)
+
 (setq inhibit-startup-message t)
 
 (menu-bar-mode -1)
@@ -24,6 +32,14 @@
                     :weight 'normal
                     :slant 'normal
                     :width 'normal)
+(if (eq system-type 'darwin)
+    (set-face-attribute 'default nil
+                    :family "Monaco"
+                    :height 140
+                    :weight 'normal
+                    :slant 'normal
+                    :width 'normal))
+
 
 (global-auto-revert-mode t)
 (setq auto-revert-verbose nil)
