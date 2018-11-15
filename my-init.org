@@ -40,6 +40,9 @@
                     :slant 'normal
                     :width 'normal))
 
+(use-package exec-path-from-shell :ensure t
+  :init (if (eq system-type 'darwin)
+            (add-to-list 'my-packages 'exec-path-from-shell)))
 
 (global-auto-revert-mode t)
 (setq auto-revert-verbose nil)
@@ -167,6 +170,7 @@
 #+BEGIN_SRC emacs-lisp
 (use-package cider :ensure t)
 (use-package geiser :ensure t)
+(use-package clojure-mode-extra-font-locking :ensure t)
 (use-package rainbow-delimiters :ensure t
   :init (progn 
           (add-hook 'emacs-lisp-mode-hook       'rainbow-delimiters-mode)
@@ -175,14 +179,14 @@
           (add-hook 'lisp-mode-hook             'rainbow-delimiters-mode)
           (add-hook 'lisp-interaction-mode-hook 'rainbow-delimiters-mode)
           (add-hook 'scheme-mode-hook           'rainbow-delimiters-mode)))
-;; (use-package paredit :ensure t
-;;   :init (progn 
-;;           (add-hook 'emacs-lisp-mode-hook       'enable-paredit-mode)
-;;           (add-hook 'eval-expression-minibuffer-setup-hook 'enable-paredit-mode)
-;;           (add-hook 'ielm-mode-hook             'enable-paredit-mode)
-;;           (add-hook 'lisp-mode-hook             'enable-paredit-mode)
-;;           (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
-;;           (add-hook 'scheme-mode-hook           'enable-paredit-mode)))
+(use-package paredit :ensure t
+  :init (progn 
+          (add-hook 'emacs-lisp-mode-hook       'enable-paredit-mode)
+          (add-hook 'eval-expression-minibuffer-setup-hook 'enable-paredit-mode)
+          (add-hook 'ielm-mode-hook             'enable-paredit-mode)
+          (add-hook 'lisp-mode-hook             'enable-paredit-mode)
+          (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
+          (add-hook 'scheme-mode-hook           'enable-paredit-mode)))
 #+END_SRC
 
 * misc packages
