@@ -169,7 +169,8 @@
 ** lisp/scheme/clojure
 #+BEGIN_SRC emacs-lisp
 (use-package cider :ensure t
-  :bind ("C-q" . cider-doc))
+  :bind (("C-q" . cider-doc)
+         ("M-q" . cider-apropos)))
 (use-package geiser :ensure t)
 (use-package clojure-mode-extra-font-locking :ensure t)
 (use-package rainbow-delimiters :ensure t
