@@ -169,8 +169,7 @@
 ** lisp/scheme/clojure
 #+BEGIN_SRC emacs-lisp
 (use-package cider :ensure t
-  :bind (("C-q" . cider-doc)
-         ("M-q" . cider-apropos)))
+  :bind ("C-q" . cider-doc))
 (use-package geiser :ensure t)
 (use-package clojure-mode-extra-font-locking :ensure t)
 (use-package rainbow-delimiters :ensure t
@@ -188,7 +187,8 @@
           (add-hook 'ielm-mode-hook             'enable-paredit-mode)
           (add-hook 'lisp-mode-hook             'enable-paredit-mode)
           (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
-          (add-hook 'scheme-mode-hook           'enable-paredit-mode)))
+          (add-hook 'scheme-mode-hook           'enable-paredit-mode)
+          (add-hook 'clojure-mode-hook          'enable-paredit-mode)))
 #+END_SRC
 
 * misc packages
