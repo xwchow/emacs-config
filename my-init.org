@@ -32,17 +32,16 @@
                     :weight 'normal
                     :slant 'normal
                     :width 'normal)
-(if (eq system-type 'darwin)
-    (set-face-attribute 'default nil
-                    :family "Monaco"
-                    :height 140
-                    :weight 'normal
-                    :slant 'normal
-                    :width 'normal))
 
-(use-package exec-path-from-shell :ensure t
-  :init (if (eq system-type 'darwin)
-            (add-to-list 'my-packages 'exec-path-from-shell)))
+(when (eq system-type 'darwin) ;; mac specific settings
+  (set-face-attribute 'default nil
+                      :family "Monaco"
+                      :height 140
+                      :weight 'normal
+                      :slant 'normal
+                      :width 'normal)
+  (use-package exec-path-from-shell :ensure t)
+  (setq mac-command-modifier 'meta))
 
 (global-auto-revert-mode t)
 (setq auto-revert-verbose nil)
@@ -116,7 +115,8 @@
               ("C-=" . elpy-goto-definition))
   :init (progn (elpy-enable)
                (setq elpy-rpc-python-command "python3.6")
-               (elpy-use-ipython "ipython3")))
+               (setq python-shell-interpreter "python"
+                     python-shell-interpreter-args "-i")))
 
 ;; flycheck instead of flymake
 (when (require 'flycheck nil t)
@@ -167,10 +167,10 @@
 #+END_SRC
    
 ** lisp/scheme/clojure
+
 #+BEGIN_SRC emacs-lisp
 (use-package cider :ensure t
-  :bind (("C-q" . cider-doc)
-         ("M-q" . cider-apropos)))
+  :bind (("C-q" . cider-doc)))
 (use-package geiser :ensure t)
 (use-package clojure-mode-extra-font-locking :ensure t)
 (use-package rainbow-delimiters :ensure t
@@ -188,7 +188,8 @@
           (add-hook 'ielm-mode-hook             'enable-paredit-mode)
           (add-hook 'lisp-mode-hook             'enable-paredit-mode)
           (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
-          (add-hook 'scheme-mode-hook           'enable-paredit-mode)))
+          (add-hook 'scheme-mode-hook           'enable-paredit-mode)
+          (add-hook 'clojure-mode-hook          'enable-paredit-mode)))
 #+END_SRC
 
 * misc packages
