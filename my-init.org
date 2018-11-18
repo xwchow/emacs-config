@@ -170,7 +170,6 @@
 #+END_SRC
    
 ** lisp/scheme/clojure
-
 #+BEGIN_SRC emacs-lisp
 (use-package cider :ensure t
   :bind 
