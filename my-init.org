@@ -47,6 +47,7 @@
 (setq auto-revert-verbose nil)
 (global-set-key (kbd "<f5>") 'revert-buffer)
 #+END_SRC
+
 * programming config
 ** general
 #+BEGIN_SRC emacs-lisp
@@ -179,7 +180,7 @@
 (use-package clojure-mode-extra-font-locking :ensure t)
 (use-package rainbow-delimiters :ensure t
   :config 
-  (progn 
+  (progn
           (add-hook 'emacs-lisp-mode-hook       'rainbow-delimiters-mode)
           (add-hook 'eval-expression-minibuffer-setup-hook 'rainbow-delimiters-mode)
           (add-hook 'ielm-mode-hook             'rainbow-delimiters-mode)
@@ -192,7 +193,7 @@
 (add-hook 'cider-mode-hook 'cider-company-enable-fuzzy-completion)
 
 ; (use-package paredit :ensure t
-;   :init (progn 
+;   :init (progn
 ;           (add-hook 'emacs-lisp-mode-hook       'enable-paredit-mode)
 ;           (add-hook 'eval-expression-minibuffer-setup-hook 'enable-paredit-mode)
 ;           (add-hook 'ielm-mode-hook             'enable-paredit-mode)
@@ -219,10 +220,6 @@
 (use-package hungry-delete :ensure t
   :config (global-hungry-delete-mode t))
 
-;; expand the marked region in semantic increments (negative prefix to reduce region)
-(use-package expand-region :ensure t
-  :config (global-set-key (kbd "M-=") 'er/expand-region))
-
 ;; mark and edit all copies of the marked region simultaniously.
 (use-package iedit :ensure t
   :config (set-face-attribute 'iedit-occurrence nil
@@ -232,6 +229,7 @@
   :init (global-undo-tree-mode t))
 
 #+END_SRC
+
 * other
 #+BEGIN_SRC emacs-lisp
 ;; save location in file
